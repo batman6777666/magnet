@@ -588,7 +588,10 @@ echo $response;
 </div>
 
 <script>
-  const baseUrl = window.location.origin;
+  // Set to your HF Space URL when deploying on Cloudflare Pages.
+  // Leave empty when served from the same domain as the backend.
+  const API_BASE = ''; // e.g. 'https://username-multimovies.hf.space'
+  const baseUrl = API_BASE || window.location.origin;
   document.getElementById('baseUrl').textContent = baseUrl;
   document.getElementById('baseUrl2').textContent = baseUrl;
   document.getElementById('baseUrl3').textContent = baseUrl;

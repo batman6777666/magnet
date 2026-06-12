@@ -2,7 +2,6 @@ require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') }
 
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
 
 const config = require('../config/config');
 const { initPool, shutdownPool } = require('./services/browserPool');
@@ -18,8 +17,6 @@ const app = express();
 
 app.use(cors());
 app.use(express.json({ limit: '10kb' }));
-app.use(express.static(path.join(__dirname, '..', 'public')));
-
 // ─── Public routes (no auth required) ───────────────────────────────────────
 
 app.get('/health', (_req, res) => {
@@ -60,13 +57,11 @@ async function start() {
       console.log(`║   Env  : ${String(config.NODE_ENV).padEnd(32)}║`);
       console.log('╚══════════════════════════════════════════╝');
       console.log('');
-      console.log(`  Docs & Key Signup → http://localhost:${config.PORT}`);
-      console.log(`  API Documentation → http://localhost:${config.PORT}/api-docs.html`);
       console.log(`  POST /auth/register  (get your API key)`);
       console.log(`  POST /v1/extract     (X-API-Key required)`);
+      console.log(`  POST /inspect        (no auth — URL inspection)`);
       console.log(`  GET  /health         http://localhost:${config.PORT}/health`);
       console.log('');
-      console.log('[Server] Ready. Extraction uses pure HTTP — blazing fast.');
     });
   } catch (err) {
     console.error('[FATAL] Server failed to start:', err.message);
