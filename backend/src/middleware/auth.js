@@ -1,10 +1,6 @@
-const { validateKey, trackUsage } = require('../services/keyStore');
-const { ERROR_CODES } = require('../utils/constants');
+const { validateKey, trackUsage } = require('../services/auth/keyService');
+const { ERROR_CODES } = require('../config/constants');
 
-/**
- * Validates X-API-Key header against the live key store.
- * Tracks usage on every successful request.
- */
 function authMiddleware(req, res, next) {
   const apiKey = req.headers['x-api-key'];
 
@@ -26,11 +22,9 @@ function authMiddleware(req, res, next) {
     });
   }
 
-  // Attach key info to request for downstream use
   req.apiKey = apiKey;
   req.apiKeyRecord = record;
 
-  // Track usage async — don't block the request
   setImmediate(() => trackUsage(apiKey));
 
   next();

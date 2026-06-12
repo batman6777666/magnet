@@ -1,5 +1,5 @@
-const config = require('../../config/config');
-const { STREAM_PATTERNS } = require('../utils/constants');
+const config = require('../../config');
+const { STREAM_PATTERNS } = require('../../config/constants');
 
 const PAGE_TIMEOUT = 15000;
 

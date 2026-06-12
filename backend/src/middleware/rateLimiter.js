@@ -1,11 +1,7 @@
 const rateLimit = require('express-rate-limit');
-const config = require('../../config/config');
-const { ERROR_CODES } = require('../utils/constants');
+const config = require('../config');
+const { ERROR_CODES } = require('../config/constants');
 
-/**
- * Per-API-key rate limiter.
- * Falls back to IP if key is somehow absent (shouldn't happen — auth runs first).
- */
 const rateLimiter = rateLimit({
   windowMs: config.RATE_LIMIT_WINDOW_MS,
   max: config.RATE_LIMIT_MAX,

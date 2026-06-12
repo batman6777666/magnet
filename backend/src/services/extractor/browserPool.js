@@ -1,24 +1,13 @@
 const puppeteer = require('puppeteer');
-const config = require('../../config/config');
-
-/**
- * Browser pool — keeps N Chromium instances warm and reuses them.
- *
- * Acquire → do work → release.
- * If browser crashes, it is replaced transparently.
- * Callers that arrive when all slots are busy are queued and
- * served in FIFO order as soon as a slot is released.
- */
+const config = require('../../config');
 
 const pool = {
-  slots: [],      // [{ browser, busy }]
-  waitQueue: [],  // [resolve fn] waiting for a free slot
+  slots: [],
+  waitQueue: [],
 };
 
 let initialized = false;
 let initializing = false;
-
-// ─── Internal helpers ────────────────────────────────────────────────────────
 
 async function spawnBrowser() {
   const launchOptions = {
@@ -42,7 +31,6 @@ async function spawnBrowser() {
     ],
   };
 
-  // Use system Chromium in Docker environments
   if (process.env.PUPPETEER_EXECUTABLE_PATH) {
     launchOptions.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
   }
@@ -56,7 +44,6 @@ async function acquireSlot() {
     free.busy = true;
     return free;
   }
-  // Queue the caller until a slot is released
   return new Promise((resolve) => {
     pool.waitQueue.push(resolve);
   });
@@ -64,15 +51,12 @@ async function acquireSlot() {
 
 function releaseSlot(slot) {
   if (pool.waitQueue.length > 0) {
-    // Hand off directly to the next waiter — keep slot marked busy
     const next = pool.waitQueue.shift();
     next(slot);
   } else {
     slot.busy = false;
   }
 }
-
-// ─── Public API ──────────────────────────────────────────────────────────────
 
 async function initPool() {
   if (initialized || initializing) return;
@@ -94,21 +78,15 @@ async function initPool() {
   console.log(`[BrowserPool] ${size} browser(s) ready.`);
 }
 
-/**
- * Runs `fn(browser)` with a pooled browser instance.
- * Automatically replaces a crashed browser.
- * Always releases the slot — even on error.
- */
 async function withBrowser(fn) {
   if (!initialized) await initPool();
 
   const slot = await acquireSlot();
 
   try {
-    // Silently replace dead browsers
     if (!slot.browser.isConnected()) {
       console.warn('[BrowserPool] Replacing disconnected browser…');
-      try { await slot.browser.close(); } catch { /* ignore */ }
+      try { await slot.browser.close(); } catch {}
       slot.browser = await spawnBrowser();
     }
 

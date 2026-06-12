@@ -1,54 +1,10 @@
-require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
-
-const express = require('express');
-const cors = require('cors');
-
-const config = require('../config/config');
-const { initPool, shutdownPool } = require('./services/browserPool');
-const extractRouter = require('./routes/extract');
-const authRouter    = require('./routes/auth');
-const authMiddleware = require('./middleware/auth');
-const rateLimiter = require('./middleware/rateLimiter');
-const errorHandler = require('./middleware/errorHandler');
-
-const app = express();
-
-// ─── Global middleware ────────────────────────────────────────────────────────
-
-app.use(cors());
-app.use(express.json({ limit: '10kb' }));
-// ─── Public routes (no auth required) ───────────────────────────────────────
-
-app.get('/health', (_req, res) => {
-  res.json({ status: 'ok', uptime: Math.floor(process.uptime()) });
-});
-
-// Key registration — public, no API key needed
-app.use('/auth', authRouter);
-
-// Inspect endpoint — public, no API key needed
-const inspectRouter = require('./routes/inspect');
-app.use('/', inspectRouter);
-
-// ─── Versioned API (API key required) ────────────────────────────────────────
-
-app.use('/v1', authMiddleware, rateLimiter, extractRouter);
-
-// ─── 404 catch-all ───────────────────────────────────────────────────────────
-
-app.use((_req, res) => {
-  res.status(404).json({ success: false, error: 'Route not found', code: 'NOT_FOUND' });
-});
-
-// ─── Global error handler ─────────────────────────────────────────────────────
-
-app.use(errorHandler);
-
-// ─── Startup ──────────────────────────────────────────────────────────────────
+const app = require('./app');
+const config = require('./config');
+const { initPool, shutdownPool } = require('./services/extractor/browserPool');
 
 async function start() {
   try {
-    // Start listening immediately — browser pool is lazy-init on /inspect
+    await initPool();
     app.listen(config.PORT, () => {
       console.log('');
       console.log('╔══════════════════════════════════════════╗');
@@ -68,8 +24,6 @@ async function start() {
     process.exit(1);
   }
 }
-
-// ─── Graceful shutdown ────────────────────────────────────────────────────────
 
 async function shutdown(signal) {
   console.log(`\n[${signal}] Shutting down gracefully…`);

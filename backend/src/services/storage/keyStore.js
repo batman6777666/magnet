@@ -2,17 +2,13 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const DATA_DIR  = path.join(__dirname, '..', '..', 'data');
+const DATA_DIR  = path.join(__dirname, '..', '..', '..', 'data');
 const KEYS_FILE = path.join(DATA_DIR, 'keys.json');
-
-// ─── Ensure data dir + file exist ────────────────────────────────────────────
 
 function ensureStore() {
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
   if (!fs.existsSync(KEYS_FILE)) fs.writeFileSync(KEYS_FILE, '{}', 'utf8');
 }
-
-// ─── Read / write ─────────────────────────────────────────────────────────────
 
 function readStore() {
   try {
@@ -28,8 +24,6 @@ function writeStore(store) {
   fs.writeFileSync(KEYS_FILE, JSON.stringify(store, null, 2), 'utf8');
 }
 
-// ─── Key generation ───────────────────────────────────────────────────────────
-
 function generateKey() {
   const ts = Date.now().toString(36);
   const rand = crypto.randomBytes(16).toString('hex');
@@ -37,12 +31,6 @@ function generateKey() {
   return `mk-${ts}-${rand}-${checksum}`;
 }
 
-// ─── Public API ───────────────────────────────────────────────────────────────
-
-/**
- * Creates a new API key for the given name + email.
- * Returns the key string.
- */
 function createKey(name, email) {
   const store = readStore();
   let key;
@@ -66,9 +54,6 @@ function createKey(name, email) {
   return key;
 }
 
-/**
- * Returns the key record if it exists and is active, otherwise null.
- */
 function validateKey(key) {
   if (!key || typeof key !== 'string') return null;
   const store = readStore();
@@ -77,10 +62,6 @@ function validateKey(key) {
   return record;
 }
 
-/**
- * Increments request count + updates lastUsedAt.
- * Non-fatal — never throws.
- */
 function trackUsage(key) {
   try {
     const store = readStore();
@@ -89,12 +70,9 @@ function trackUsage(key) {
       store[key].lastUsedAt = new Date().toISOString();
       writeStore(store);
     }
-  } catch { /* non-fatal */ }
+  } catch {}
 }
 
-/**
- * Returns all keys (without the key string itself — safe for admin view).
- */
 function listKeys() {
   const store = readStore();
   return Object.entries(store).map(([key, rec]) => ({
@@ -103,9 +81,6 @@ function listKeys() {
   }));
 }
 
-/**
- * Revokes a key.
- */
 function revokeKey(key) {
   const store = readStore();
   if (!store[key]) return false;
