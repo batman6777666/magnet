@@ -1,6 +1,6 @@
 import type { ExtractPayload, ExtractResponse, RegisterResponse, HealthResponse, ApiError } from '../types';
 
-const API_BASE = import.meta.env.VITE_API_BASE || '';
+const API_BASE = (import.meta.env.VITE_API_BASE || 'https://magnet3390-magnet.hf.space').replace(/\/+$/, '');
 
 class ApiClient {
   private baseUrl: string;
