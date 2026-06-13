@@ -21,4 +21,6 @@ module.exports = {
   NODE_ENV: process.env.NODE_ENV || 'development',
 
   PUPPETEER_EXECUTABLE_PATH: process.env.PUPPETEER_EXECUTABLE_PATH || null,
+
+  ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS || '*',
 };
