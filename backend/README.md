@@ -1,3 +1,12 @@
+---
+title: Magnet — Video Embed Link Extractor API
+emoji: 🧲
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+pinned: false
+---
+
 # Magnet — Video Embed Link Extractor API
 
 Blazing fast video embed link extraction API powered by Puppeteer. Extracts streaming links (RPM, P2P, UPN) from source websites for movies and series.

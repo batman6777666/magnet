@@ -28,3 +28,6 @@ Thumbs.db
 
 # Sensitive data
 backend/data/keys.json
+
+# Hugging Face
+.hf_token

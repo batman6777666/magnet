@@ -41,7 +41,7 @@ export default function ApiTester() {
     }
   }, [apiKey, contentType, name, season, episode, extract]);
 
-  const requestCode = `curl -X POST ${import.meta.env.VITE_API_BASE || 'https://api.magnet.dev'}/v1/extract \\
+  const requestCode = `curl -X POST ${import.meta.env.VITE_API_BASE || 'https://magnet3390-magnet.hf.space'}/v1/extract \\
   -H "X-API-Key: ${apiKey || 'YOUR_API_KEY'}" \\
   -H "Content-Type: application/json" \\
   -d '${JSON.stringify({

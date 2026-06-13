@@ -5,7 +5,7 @@ const codeExamples: Record<string, string> = {
   node: `const axios = require('axios');
 
 const API_KEY = 'your-api-key';
-const BASE_URL = 'https://api.magnet.dev';
+const BASE_URL = 'https://magnet3390-magnet.hf.space';
 
 async function extractMovie(name) {
   try {
@@ -26,7 +26,7 @@ extractMovie('Inception');`,
   python: `import requests
 
 API_KEY = 'your-api-key'
-BASE_URL = 'https://api.magnet.dev'
+BASE_URL = 'https://magnet3390-magnet.hf.space'
 
 def extract_movie(name):
     response = requests.post(
@@ -47,7 +47,7 @@ print(result)`,
   php: `<?php
 
 $apiKey = 'your-api-key';
-$baseUrl = 'https://api.magnet.dev';
+$baseUrl = 'https://magnet3390-magnet.hf.space';
 
 function extractMovie($name) {
     global $apiKey, $baseUrl;
@@ -78,18 +78,18 @@ function extractMovie($name) {
 
 print_r(extractMovie('Inception'));`,
   curl: `# Register for an API key
-curl -X POST https://api.magnet.dev/auth/register \\
+curl -X POST https://magnet3390-magnet.hf.space/auth/register \\
   -H "Content-Type: application/json" \\
   -d '{"name": "Your Name", "email": "you@example.com"}'
 
 # Extract movie metadata
-curl -X POST https://api.magnet.dev/v1/extract \\
+curl -X POST https://magnet3390-magnet.hf.space/v1/extract \\
   -H "X-API-Key: YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{"type": "movie", "name": "Inception"}'
 
 # Extract series metadata
-curl -X POST https://api.magnet.dev/v1/extract \\
+curl -X POST https://magnet3390-magnet.hf.space/v1/extract \\
   -H "X-API-Key: YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{"type": "series", "name": "Breaking Bad", "season": 1, "episode": 1}'`,
